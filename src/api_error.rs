@@ -1,4 +1,5 @@
 use actix_web::{http::StatusCode, HttpResponse, ResponseError};
+use bcrypt::BcryptError;
 use diesel::result::Error as DieselError;
 use log::error;
 use serde::Deserialize;
@@ -17,6 +18,14 @@ impl ApiError {
             status_code,
             message,
         }
+    }
+
+    pub fn unauthorized(message: String) -> ApiError {
+        ApiError::new(401, message)
+    }
+
+    pub fn internal_server_error() -> ApiError {
+        ApiError::new(500, "Internal server error".to_string())
     }
 }
 

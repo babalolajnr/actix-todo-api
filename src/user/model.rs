@@ -1,6 +1,7 @@
 use crate::api_error::ApiError;
 use crate::db;
 use crate::schema::*;
+use bcrypt::BcryptError;
 use chrono::NaiveDateTime;
 use chrono::Utc;
 use diesel::prelude::*;
@@ -73,6 +74,18 @@ impl User {
 
         Ok(res)
     }
+
+    pub fn find_by_email(email: &str) -> Result<Self, ApiError> {
+        let mut conn = db::connection()?;
+
+        let user = user::table.filter(user::email.eq(email)).first(&mut conn)?;
+        Ok(user)
+    }
+
+    pub fn verify_password(&self, password: &str) -> Result<bool, BcryptError> {
+        let is_valid = bcrypt::verify(password, &self.password)?;
+        Ok(is_valid)
+    }
 }
 
 impl From<UserMessage> for User {
@@ -80,7 +93,7 @@ impl From<UserMessage> for User {
         User {
             id: Uuid::new_v4(),
             email: user.email,
-            password: user.password,
+            password: bcrypt::hash(&user.password, 4).unwrap(),
             name: user.name,
             created_at: Utc::now().naive_utc(),
             updated_at: None,
