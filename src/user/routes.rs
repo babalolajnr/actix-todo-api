@@ -2,7 +2,10 @@ use actix_web::{delete, get, post, put, web, HttpResponse};
 use serde_json::json;
 use uuid::Uuid;
 
-use crate::{user::model::{User, UserMessage}, api_error::ApiError};
+use crate::{
+    api_error::ApiError,
+    user::model::{User, UserMessage},
+};
 
 #[get("/users")]
 async fn find_all() -> Result<HttpResponse, ApiError> {
@@ -23,7 +26,10 @@ async fn create(user: web::Json<UserMessage>) -> Result<HttpResponse, ApiError> 
 }
 
 #[put("/users/{id}")]
-async fn update(id: web::Path<Uuid>, user: web::Json<UserMessage>) -> Result<HttpResponse, ApiError> {
+async fn update(
+    id: web::Path<Uuid>,
+    user: web::Json<UserMessage>,
+) -> Result<HttpResponse, ApiError> {
     let user = User::update(id.into_inner(), user.into_inner())?;
     Ok(HttpResponse::Ok().json(user))
 }

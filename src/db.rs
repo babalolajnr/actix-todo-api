@@ -5,6 +5,7 @@ use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use lazy_static::lazy_static;
 use log::info;
 
+
 use crate::api_error::ApiError;
 
 type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;

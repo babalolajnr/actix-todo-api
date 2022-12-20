@@ -7,6 +7,7 @@ use chrono::Utc;
 use diesel::prelude::*;
 use diesel::AsChangeset;
 use serde::{Deserialize, Serialize};
+
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Queryable, Insertable)]
