@@ -2,7 +2,7 @@
 
 diesel::table! {
     todo (id) {
-        id -> Int4,
+        id -> Uuid,
         title -> Text,
         description -> Text,
         done -> Bool,
