@@ -25,7 +25,7 @@ pub fn init() {
     info!("Initializing DB");
     lazy_static::initialize(&POOL);
     let mut conn = connection().expect("Failed to get db connection");
-    run_migrations(&mut conn);
+    run_migrations(&mut conn).unwrap();
 }
 
 fn run_migrations(

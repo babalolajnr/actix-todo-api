@@ -5,6 +5,7 @@ pub mod auth;
 mod db;
 mod schema;
 pub mod user;
+pub mod todo;
 
 use std::{env, io};
 
@@ -17,6 +18,7 @@ use log::info;
 async fn main() -> io::Result<()> {
     dotenv().ok();
     env_logger::init();
+    db::init();
 
     let mut listenfd = ListenFd::from_env();
 
