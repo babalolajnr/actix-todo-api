@@ -1,18 +1,17 @@
 // Start server and file watcher with
 // systemfd --no-pid -s http::5000 -- cargo watch -x run
 mod api_error;
-mod auth;
+pub mod auth;
 mod db;
 mod schema;
 pub mod user;
 
 use std::{env, io};
 
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use listenfd::ListenFd;
 use log::info;
-
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
@@ -24,7 +23,7 @@ async fn main() -> io::Result<()> {
     let mut server = HttpServer::new(|| {
         App::new()
             .configure(user::init_routes)
-            .configure(auth::init_routes)
+            .service(web::scope("/auth").configure(auth::init_routes))
     });
 
     server = match listenfd.take_tcp_listener(0)? {

@@ -1,5 +1,5 @@
 mod service;
 mod routes;
-mod models;
+pub mod models;
 
 pub use routes::init_routes;

@@ -1,11 +1,11 @@
 use crate::api_error::ApiError;
+use crate::auth::models::RegisterForm;
 use crate::db;
 use crate::schema::*;
 use bcrypt::BcryptError;
 use chrono::NaiveDateTime;
 use chrono::Utc;
 use diesel::prelude::*;
-use diesel::AsChangeset;
 use serde::{Deserialize, Serialize};
 
 use uuid::Uuid;
@@ -19,14 +19,6 @@ pub struct User {
     pub password: String,
     pub created_at: NaiveDateTime,
     pub updated_at: Option<NaiveDateTime>,
-}
-
-#[derive(Serialize, Deserialize, AsChangeset)]
-#[table_name = "user"]
-pub struct UserMessage {
-    pub name: String,
-    pub email: String,
-    pub password: String,
 }
 
 impl User {
@@ -46,7 +38,7 @@ impl User {
         Ok(user)
     }
 
-    pub fn create(user: UserMessage) -> Result<Self, ApiError> {
+    pub fn create(user: RegisterForm) -> Result<Self, ApiError> {
         let mut conn = db::connection()?;
 
         let user = User::from(user);
@@ -57,7 +49,7 @@ impl User {
         Ok(user)
     }
 
-    pub fn update(id: Uuid, user: UserMessage) -> Result<Self, ApiError> {
+    pub fn update(id: Uuid, user: RegisterForm) -> Result<Self, ApiError> {
         let mut conn = db::connection()?;
 
         let user = diesel::update(user::table)
@@ -89,13 +81,13 @@ impl User {
     }
 }
 
-impl From<UserMessage> for User {
-    fn from(user: UserMessage) -> Self {
+impl From<RegisterForm> for User {
+    fn from(user: RegisterForm) -> Self {
         User {
             id: Uuid::new_v4(),
-            email: user.email,
-            password: bcrypt::hash(&user.password, 4).unwrap(),
-            name: user.name,
+            email: user.email.unwrap(),
+            password: bcrypt::hash(&user.password.unwrap(), 4).unwrap(),
+            name: user.name.unwrap(),
             created_at: Utc::now().naive_utc(),
             updated_at: None,
         }
