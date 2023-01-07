@@ -4,6 +4,19 @@
         "Hmac",
         "Insertable",
         "listenfd",
+        "middlewares",
         "systemfd"
+    ],
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "Local",
+            "database": "actix_todo",
+            "username": "abdulqudduus",
+            "password": "andromeda"
+        }
     ]
 }

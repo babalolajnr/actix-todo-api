@@ -1,16 +1,19 @@
 use crate::api_error::ApiError;
 use crate::auth::models::RegisterForm;
+use crate::auth::verify;
 use crate::db;
 use crate::schema::*;
+use actix_web::FromRequest;
 use bcrypt::BcryptError;
 use chrono::NaiveDateTime;
 use chrono::Utc;
 use diesel::prelude::*;
+use futures::future::LocalBoxFuture;
 use serde::{Deserialize, Serialize};
 
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Queryable, Insertable)]
+#[derive(Serialize, Deserialize, Queryable, Insertable, Debug)]
 #[table_name = "user"]
 pub struct User {
     pub id: Uuid,
@@ -91,5 +94,38 @@ impl From<RegisterForm> for User {
             created_at: Utc::now().naive_utc(),
             updated_at: None,
         }
+    }
+}
+
+impl FromRequest for User {
+    type Error = ApiError;
+    type Future = LocalBoxFuture<'static, Result<Self, Self::Error>>;
+
+    fn from_request(
+        req: &actix_web::HttpRequest,
+        _payload: &mut actix_web::dev::Payload,
+    ) -> Self::Future {
+        let authorization = req.headers().get("Authorization");
+
+        let token = match authorization {
+            Some(token) => token.to_str().unwrap(),
+            None => {
+                return Box::pin(async {
+                    Err(ApiError::unauthorized(
+                        "This request is unauthorized".to_string(),
+                    ))
+                })
+            }
+        };
+
+        let claims = verify(token).unwrap();
+        let user = User::find(
+            Uuid::parse_str(&claims.get("id").unwrap())
+                .map_err(|_e| ApiError::unauthorized("This request is unauthorized".to_string()))
+                .unwrap(),
+        )
+        .unwrap();
+
+        Box::pin(async { Ok(user) })
     }
 }

@@ -4,8 +4,8 @@ mod api_error;
 pub mod auth;
 mod db;
 mod schema;
-pub mod user;
 pub mod todo;
+pub mod user;
 
 use std::{env, io};
 
@@ -26,6 +26,10 @@ async fn main() -> io::Result<()> {
         App::new()
             .configure(user::init_routes)
             .service(web::scope("/auth").configure(auth::init_routes))
+            .service(
+                web::scope("/todos")
+                    .configure(todo::init_routes)
+            )
     });
 
     server = match listenfd.take_tcp_listener(0)? {

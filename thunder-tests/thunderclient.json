@@ -1,0 +1,61 @@
+[
+  {
+    "_id": "5cea6bf0-d71a-4a9f-ada2-21fb4112f766",
+    "colId": "52e77f2b-0761-4e6e-8dcb-f49aa084559a",
+    "containerId": "1dd9dba9-19e3-42bf-ad82-e5151e8c1cb3",
+    "name": "Login",
+    "url": "{{base_url}}auth/login",
+    "method": "POST",
+    "sortNum": 10000,
+    "created": "2022-12-23T18:54:14.285Z",
+    "modified": "2023-01-07T19:15:05.129Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"email\": \"babalolajnr@gmail.com\",\n  \"password\": \"helloworld\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "set-env-var",
+        "custom": "json.token",
+        "action": "setto",
+        "value": "{{token}}"
+      }
+    ]
+  },
+  {
+    "_id": "cc9b0d0f-6520-41ab-b12f-8dd358002fb7",
+    "colId": "52e77f2b-0761-4e6e-8dcb-f49aa084559a",
+    "containerId": "0ee0ba3b-a17a-4bcd-93ca-6ed010cb2fb7",
+    "name": "Todos",
+    "url": "{{base_url}}todos/",
+    "method": "GET",
+    "sortNum": 20000,
+    "created": "2022-12-28T06:14:41.835Z",
+    "modified": "2023-01-07T20:37:45.899Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "3a01914c-2171-43fd-86a3-45c474139d96",
+    "colId": "52e77f2b-0761-4e6e-8dcb-f49aa084559a",
+    "containerId": "0ee0ba3b-a17a-4bcd-93ca-6ed010cb2fb7",
+    "name": "Todo",
+    "url": "{{base_url}}todos/",
+    "method": "POST",
+    "sortNum": 30000,
+    "created": "2023-01-07T20:41:10.594Z",
+    "modified": "2023-01-07T20:49:26.143Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n\n}",
+      "form": []
+    },
+    "tests": []
+  }
+]

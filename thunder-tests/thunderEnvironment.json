@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "3066d9a8-60ac-4bb0-9c2a-a27bf15a171f",
+    "name": "Local",
+    "default": true,
+    "sortNum": 10000,
+    "created": "2022-12-23T18:52:23.167Z",
+    "modified": "2022-12-23T18:52:23.167Z",
+    "data": [
+      {
+        "name": "base_url",
+        "value": "http://127.0.0.1:5000/"
+      },
+      {
+        "name": "token",
+        "value": "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImJhYmFsb2xham5yQGdtYWlsLmNvbSIsImlkIjoiOTI2MWYxNmYtYjQ3YS00MDRhLTlkNmItZjJmYzkwZGE2YzA4IiwibmFtZSI6IkFiZHVscXVkZHV1cyJ9.FaZ2lgJ6WWPCiphGb3tlbzJIXXDre7lCjTfUOCwdxR8"
+      }
+    ]
+  }
+]

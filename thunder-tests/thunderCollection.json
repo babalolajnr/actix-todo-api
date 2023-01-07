@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "52e77f2b-0761-4e6e-8dcb-f49aa084559a",
+    "colName": "Api",
+    "created": "2022-12-23T18:53:49.157Z",
+    "sortNum": 10000,
+    "folders": [
+      {
+        "_id": "1dd9dba9-19e3-42bf-ad82-e5151e8c1cb3",
+        "name": "Auth",
+        "containerId": "",
+        "created": "2022-12-23T18:53:55.765Z",
+        "sortNum": 10000
+      },
+      {
+        "_id": "0ee0ba3b-a17a-4bcd-93ca-6ed010cb2fb7",
+        "name": "Todo",
+        "containerId": "",
+        "created": "2022-12-23T18:54:06.288Z",
+        "sortNum": 20000,
+        "settings": {
+          "headers": [],
+          "auth": {
+            "type": "bearer",
+            "bearer": "{{token}}"
+          },
+          "tests": []
+        }
+      }
+    ]
+  }
+]
