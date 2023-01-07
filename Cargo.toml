@@ -29,3 +29,4 @@ hmac = "0.12.1"
 sha2 = "0.10.6"
 bcrypt = "0.13.0"
 validator = { version = "0.16.0", features = ["validator_derive", "derive"] }
+futures = "0.3.25"
