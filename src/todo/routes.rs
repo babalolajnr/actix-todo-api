@@ -19,18 +19,13 @@ async fn create(user: User, form: web::Json<CreateTodoForm>) -> Result<HttpRespo
 
 #[get("/")]
 async fn todos(user: User) -> Result<HttpResponse, ApiError> {
-    println!("user: {:?}", user);
+
+    let todos = Todo::todos(user)?;
 
     Ok(HttpResponse::Ok().json(json!({
         "message": "Todos fetched successfully",
-        "data": []
+        "data": todos
     })))
-    // let todos = Todo::find_all()?;
-
-    // Ok(HttpResponse::Ok().json(json!({
-    //     "message": "Todos fetched successfully",
-    //     "data": todos
-    // })))
 }
 
 pub fn init_routes(cfg: &mut web::ServiceConfig) {

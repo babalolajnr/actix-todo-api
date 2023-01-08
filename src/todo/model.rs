@@ -31,6 +31,16 @@ impl Todo {
 
         Ok(todo)
     }
+
+    pub fn todos(user: User) -> Result<Vec<Self>, ApiError> {
+        let mut conn = db::connection()?;
+
+        let todos = todo::table
+            .filter(todo::user_id.eq(user.id))
+            .load::<Todo>(&mut conn)?;
+
+        Ok(todos)
+    }
 }
 
 impl Todo {
