@@ -1,13 +1,16 @@
 use crate::user::User;
 use crate::{api_error::ApiError, db, schema::*};
-use chrono::NaiveDateTime;
+use actix_web::dev::Payload;
+use actix_web::{FromRequest, HttpRequest};
+use chrono::{NaiveDateTime, Utc};
 use diesel::prelude::*;
 use diesel::{AsChangeset, Insertable, Queryable};
+use futures::future::LocalBoxFuture;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use validator::Validate;
 
-#[derive(Serialize, Deserialize, AsChangeset, Insertable, Queryable)]
+#[derive(Serialize, Deserialize, AsChangeset, Insertable, Queryable, Debug)]
 #[table_name = "todo"]
 pub struct Todo {
     pub id: Uuid,
@@ -41,6 +44,40 @@ impl Todo {
 
         Ok(todos)
     }
+
+    pub fn update(user: User, todo: Todo, form: UpdateTodoForm) -> Result<Self, ApiError> {
+        let mut conn = db::connection()?;
+
+        let todo = Todo {
+            id: todo.id,
+            title: form.title.as_ref().unwrap_or(&todo.title).to_string(),
+            description: form
+                .description
+                .as_ref()
+                .unwrap_or(&todo.description)
+                .to_string(),
+            done: todo.done,
+            user_id: todo.user_id,
+            created_at: todo.created_at,
+            updated_at: Some(Utc::now().naive_utc()),
+        };
+
+        let todo = diesel::update(todo::table)
+            .filter(todo::id.eq(todo.id))
+            .filter(todo::user_id.eq(user.id))
+            .set(todo)
+            .get_result(&mut conn)?;
+
+        Ok(todo)
+    }
+
+    pub fn find(id: Uuid) -> Result<Self, ApiError> {
+        let mut conn = db::connection()?;
+
+        let todo = todo::table.filter(todo::id.eq(id)).first(&mut conn)?;
+
+        Ok(todo)
+    }
 }
 
 impl Todo {
@@ -52,9 +89,27 @@ impl Todo {
     }
 }
 
+impl FromRequest for Todo {
+    type Error = ApiError;
+    type Future = LocalBoxFuture<'static, Result<Self, Self::Error>>;
+
+    fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
+        let todo_id = req.match_info().get("id").unwrap();
+        let todo_id = Uuid::parse_str(todo_id).unwrap();
+
+        let todo = Todo::find(todo_id).unwrap();
+        Box::pin(async { Ok(todo) })
+    }
+}
+
 #[derive(Serialize, Deserialize, Validate)]
 pub struct CreateTodoForm {
     #[validate(required(message = "Title is required"))]
+    pub title: Option<String>,
+    pub description: Option<String>,
+}
+#[derive(Serialize, Deserialize, Validate)]
+pub struct UpdateTodoForm {
     pub title: Option<String>,
     pub description: Option<String>,
 }
