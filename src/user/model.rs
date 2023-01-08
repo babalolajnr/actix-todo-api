@@ -9,6 +9,7 @@ use chrono::NaiveDateTime;
 use chrono::Utc;
 use diesel::prelude::*;
 use futures::future::LocalBoxFuture;
+use log::error;
 use serde::{Deserialize, Serialize};
 
 use uuid::Uuid;
@@ -111,6 +112,7 @@ impl FromRequest for User {
             Some(token) => token.to_str().unwrap(),
             None => {
                 return Box::pin(async {
+                    error!("No token provided");
                     Err(ApiError::unauthorized(
                         "This request is unauthorized".to_string(),
                     ))
@@ -118,10 +120,26 @@ impl FromRequest for User {
             }
         };
 
-        let claims = verify(token).unwrap();
+        let verify = verify(token);
+
+        let claims = match verify {
+            Ok(claims) => claims,
+            Err(e) => {
+                error!("{:?}", e);
+                return Box::pin(async {
+                    Err(ApiError::unauthorized(
+                        "This request is unauthorized".to_string(),
+                    ))
+                });
+            }
+        };
+
         let user = User::find(
             Uuid::parse_str(&claims.get("id").unwrap())
-                .map_err(|_e| ApiError::unauthorized("This request is unauthorized".to_string()))
+                .map_err(|e| {
+                    error!("{}", e);
+                    ApiError::unauthorized("This request is unauthorized".to_string())
+                })
                 .unwrap(),
         )
         .unwrap();
