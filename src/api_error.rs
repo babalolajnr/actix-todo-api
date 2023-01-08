@@ -31,6 +31,10 @@ impl ApiError {
     pub fn bad_request(message: String) -> ApiError {
         ApiError::new(400, message)
     }
+
+    pub fn not_found(message: String) -> ApiError {
+        ApiError::new(404, message)
+    }
 }
 
 impl fmt::Display for ApiError {

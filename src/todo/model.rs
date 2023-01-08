@@ -6,6 +6,7 @@ use chrono::{NaiveDateTime, Utc};
 use diesel::prelude::*;
 use diesel::{AsChangeset, Insertable, Queryable};
 use futures::future::LocalBoxFuture;
+use log::error;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use validator::Validate;
@@ -95,9 +96,25 @@ impl FromRequest for Todo {
 
     fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
         let todo_id = req.match_info().get("id").unwrap();
-        let todo_id = Uuid::parse_str(todo_id).unwrap();
+        
+        let todo_id = match Uuid::parse_str(todo_id) {
+            Ok(id) => id,
+            Err(e) => {
+                error!("Error: {}", e);
+                return Box::pin(async {
+                    Err(ApiError::not_found("Invalid id provided".to_string()))
+                });
+            }
+        };
 
-        let todo = Todo::find(todo_id).unwrap();
+        let todo = match Todo::find(todo_id) {
+            Ok(todo) => todo,
+            Err(e) => {
+                error!("Error: {}", e);
+                return Box::pin(async { Err(ApiError::not_found("Todo not found".to_string())) });
+            }
+        };
+
         Box::pin(async { Ok(todo) })
     }
 }

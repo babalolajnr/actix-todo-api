@@ -63,11 +63,11 @@
     "colId": "52e77f2b-0761-4e6e-8dcb-f49aa084559a",
     "containerId": "0ee0ba3b-a17a-4bcd-93ca-6ed010cb2fb7",
     "name": "Todos",
-    "url": "{{base_url}}todos/c1a19027-58c0-45ba-8873-226b9074bdf",
+    "url": "{{base_url}}todos/a",
     "method": "PATCH",
     "sortNum": 40000,
     "created": "2023-01-08T07:15:41.388Z",
-    "modified": "2023-01-08T08:26:26.677Z",
+    "modified": "2023-01-08T16:00:17.501Z",
     "headers": [],
     "params": [],
     "body": {
