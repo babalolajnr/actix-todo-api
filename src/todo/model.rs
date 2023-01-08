@@ -90,6 +90,28 @@ impl Todo {
 
         Ok(deleted)
     }
+
+    pub fn toggle_completion(user: User, todo: Todo) -> Result<Self, ApiError> {
+        let mut conn = db::connection()?;
+
+        let todo = Todo {
+            id: todo.id,
+            title: todo.title,
+            description: todo.description,
+            done: !todo.done,
+            user_id: todo.user_id,
+            created_at: todo.created_at,
+            updated_at: Some(Utc::now().naive_utc()),
+        };
+
+        let todo = diesel::update(todo::table)
+            .filter(todo::id.eq(todo.id))
+            .filter(todo::user_id.eq(user.id))
+            .set(todo)
+            .get_result(&mut conn)?;
+
+        Ok(todo)
+    }
 }
 
 impl Todo {
@@ -107,7 +129,7 @@ impl FromRequest for Todo {
 
     fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
         let todo_id = req.match_info().get("id").unwrap();
-        
+
         let todo_id = match Uuid::parse_str(todo_id) {
             Ok(id) => id,
             Err(e) => {

@@ -58,6 +58,26 @@ async fn delete(todo: Todo, user: User) -> Result<HttpResponse, ApiError> {
     })))
 }
 
+#[patch("/done/{id}")]
+async fn done(todo: Todo, user: User) -> Result<HttpResponse, ApiError> {
+    if todo.user_id != user.id {
+        return Err(ApiError::unauthorized("Unauthorized".to_string()));
+    }
+
+    let todo = Todo::toggle_completion(user, todo)?;
+
+    let message = if todo.done {
+        "Todo marked as done"
+    } else {
+        "Todo marked as not done"
+    };
+
+    Ok(HttpResponse::Ok().json(json!({
+        "message": message,
+        "data": todo
+    })))
+}
+
 pub fn init_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(create);
     cfg.service(todos);
