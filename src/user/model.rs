@@ -109,7 +109,10 @@ impl FromRequest for User {
         let authorization = req.headers().get("Authorization");
 
         let token = match authorization {
-            Some(token) => token.to_str().unwrap(),
+            Some(token) => token.to_str().map_err(|_| {
+                error!("Token is not a valid string");
+                ApiError::unauthorized("This request is unauthorized".to_string())
+            }),
             None => {
                 return Box::pin(async {
                     error!("No token provided");
@@ -120,7 +123,7 @@ impl FromRequest for User {
             }
         };
 
-        let verify = verify(token);
+        let verify = verify(token.unwrap());
 
         let claims = match verify {
             Ok(claims) => claims,
