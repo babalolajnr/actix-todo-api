@@ -76,5 +76,19 @@
       "form": []
     },
     "tests": []
+  },
+  {
+    "_id": "eb9b25dd-cb0a-4294-ae84-0484ca0ed580",
+    "colId": "52e77f2b-0761-4e6e-8dcb-f49aa084559a",
+    "containerId": "0ee0ba3b-a17a-4bcd-93ca-6ed010cb2fb7",
+    "name": "Todos",
+    "url": "{{base_url}}todos/c1a19027-58c0-45ba-8873-226b9074bdfc",
+    "method": "DELETE",
+    "sortNum": 50000,
+    "created": "2023-01-08T16:07:03.190Z",
+    "modified": "2023-01-08T16:07:54.560Z",
+    "headers": [],
+    "params": [],
+    "tests": []
   }
 ]

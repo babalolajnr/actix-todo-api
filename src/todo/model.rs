@@ -79,6 +79,17 @@ impl Todo {
 
         Ok(todo)
     }
+
+    pub fn delete(user: User, todo: Todo) -> Result<usize, ApiError> {
+        let mut conn = db::connection()?;
+
+        let deleted = diesel::delete(todo::table)
+            .filter(todo::id.eq(todo.id))
+            .filter(todo::user_id.eq(user.id))
+            .execute(&mut conn)?;
+
+        Ok(deleted)
+    }
 }
 
 impl Todo {

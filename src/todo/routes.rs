@@ -1,13 +1,10 @@
-use actix_web::{get, patch, post, web, HttpResponse};
-use chrono::Utc;
-use serde_json::json;
-use uuid::Uuid;
-
 use crate::{
     api_error::ApiError,
     todo::model::{CreateTodoForm, Todo, UpdateTodoForm},
     user::User,
 };
+use actix_web::{delete, get, patch, post, web, HttpResponse};
+use serde_json::json;
 
 #[post("/")]
 async fn create(user: User, form: web::Json<CreateTodoForm>) -> Result<HttpResponse, ApiError> {
@@ -47,8 +44,23 @@ async fn update(
     })))
 }
 
+#[delete("/{id}")]
+async fn delete(todo: Todo, user: User) -> Result<HttpResponse, ApiError> {
+    if todo.user_id != user.id {
+        return Err(ApiError::unauthorized("Unauthorized".to_string()));
+    }
+
+    Todo::delete(user, todo)?;
+
+    Ok(HttpResponse::Ok().json(json!({
+        "message": "Todo deleted successfully",
+        "data": []
+    })))
+}
+
 pub fn init_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(create);
     cfg.service(todos);
     cfg.service(update);
+    cfg.service(delete);
 }
